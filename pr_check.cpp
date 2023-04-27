@@ -32,15 +32,19 @@ int main(int argc, char* argv[]){
         std::string prereq;
         while (ss >> prereq) {
             // Check if the course already exists in the map
-            auto it = course_map.find(course);
-            if (it != course_map.end()) {
+            auto iterator = course_map.find(course);
+            auto prereq_it = course_map.find(prereq);
+            if (iterator != course_map.end()) {
                 // Add the new prerequisite to the existing vector
-                it->second.push_back(prereq);
-            } else {
+                iterator->second.push_back(prereq);
+            }else {
                 // Add a new element to the map with an empty vector
                 course_map[course] = vector<std::string>();
                 // Add the new prerequisite to the empty vector
                 course_map[course].push_back(prereq);
+            }
+            if(prereq_it == course_map.end()){
+                course_map[prereq] = vector<std::string>();
             }
         }
     }
@@ -54,6 +58,9 @@ int main(int argc, char* argv[]){
         }
         cout << endl;
     }
+
+
+
 
     return 0;
 }
