@@ -10,9 +10,8 @@ using namespace std;
 
  int max_depth = 0;
 
-bool dfs(unordered_map<string,vector<string>> &course_map,unordered_set<string> &visited, unordered_set<string> &stack,const string &course,int depth,int &max_depth){
+bool dfs(unordered_map<string,vector<string>> &course_map, unordered_set<string> &visited, const string &course,int depth,int &max_depth){
     visited.insert(course);
-    stack.insert(course);
 
     if(depth > max_depth){
         max_depth = depth;
@@ -20,25 +19,22 @@ bool dfs(unordered_map<string,vector<string>> &course_map,unordered_set<string> 
 
     for(const auto& prereq: course_map[course]){
         if(!visited.count(prereq)){
-            if(dfs(course_map,visited,stack,prereq,depth + 1, max_depth)){
+            if(dfs(course_map,visited,prereq,depth + 1, max_depth)){
                 return true;
             }
-        }else if(stack.count(prereq)){
-            return true;
         }
     }
 
-    stack.erase(course);
+    
     return false;
 }
 
 bool has_cycle(unordered_map<string,vector<string>> &course_map){
     unordered_set<string> visited;
-    unordered_set<string> stack;
-   
+      
     for(const auto& course: course_map){
         if(!visited.count(course.first)){
-              if (dfs(course_map, visited, stack, course.first,0,max_depth)) {
+              if (dfs(course_map, visited,course.first,0,max_depth)) {
                 return true;
         }
     }
@@ -47,7 +43,7 @@ bool has_cycle(unordered_map<string,vector<string>> &course_map){
 }
 
 
-
+/*
 int main(int argc, char* argv[]){
 
      if (argc < 2) {
@@ -84,6 +80,7 @@ int main(int argc, char* argv[]){
                 // Add the new prerequisite to the empty vector
                 course_map[course].push_back(prereq);
             }
+            //add courses that has no prerequisites with an empty vector
             if(prereq_it == course_map.end()){
                 course_map[prereq] = vector<std::string>();
             }
@@ -113,4 +110,4 @@ int main(int argc, char* argv[]){
 
 
     return 0;
-}
+}*/

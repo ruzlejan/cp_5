@@ -1,8 +1,11 @@
 CC = gcc
 CFLAGS = -Wall -std=c++17  -ggdb 
 
-test : pr_check
+testpr_check : pr_check
 	./pr_check prereqs.txt
 
+testsch_check : sch_check
+	./sch_check prereqs.txt schedfile.txt
+
 clean :
-	-rm pr_check
+	-rm sch_check
