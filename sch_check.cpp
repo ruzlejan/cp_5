@@ -5,9 +5,20 @@
 #include <fstream>
 #include <unordered_set>
 #include <vector>
+#include <queue>
 #include "pr_check.cpp"
 
 using namespace std;
+
+bool sameCourse(unordered_map<string,vector<string>> &schedule_map){
+for(const auto& values:schedule_map){
+    const auto& numValues = values.second;
+    if(numValues.size() > 1){
+        return true;
+    }
+}
+return false;
+}
 
 
 
@@ -39,12 +50,12 @@ bool isBefore(string string1,string string2){
 }
 
 
-bool viability(unordered_map<string,vector<string>> &course_map,unordered_map<string,string> &schedule_map){
+bool viability(unordered_map<string,vector<string>> &course_map,unordered_map<string,vector<string>> &schedule_map){
  for(const auto &course:schedule_map){
-    string semCourse = course.second;
+    string semCourse = course.second[0];
     for(const auto &prereq:course_map[course.first]){
         auto prereq_itr = schedule_map.find(prereq);
-        string semPrereq = prereq_itr->second;
+        string semPrereq = prereq_itr->second[0];
         if(!isBefore(semPrereq,semCourse)){
             return false;
         }
@@ -53,6 +64,33 @@ bool viability(unordered_map<string,vector<string>> &course_map,unordered_map<st
  return true;
 }
 
+
+bool isTooMany(const unordered_map<string, vector<string>>& schedule_map) {
+//swapping key-value of existing unordered_map into value-key relation and store it in a new unordered map
+unordered_map<string,vector<string>> newMap;
+    for (const auto& kv : schedule_map) {
+        string key = kv.first;
+        string value = kv.second[0];
+        newMap[value].push_back(key);
+    }
+    //print new map
+    for (const auto& kv : newMap) {
+        cout << kv.first << ": ";
+        for (const auto& value : kv.second) {
+            cout << value << " ";
+        }
+        cout << endl;
+    }
+//check if courses taken in a semester is more then 3
+for(const auto& values:newMap){
+    const auto& numValues = values.second;
+    if(numValues.size() > 3){
+        return true;
+    }
+}
+    
+    return false;
+}
 
 
 
@@ -105,26 +143,40 @@ int main(int argc, char* argv[]){
         return 1;
     }   
 
-    unordered_map<string,string> schedule_map;
+    unordered_map<string,vector<string>> schedule_map;
     string schedline;
     while(getline(infile2,schedline)){
         stringstream schedss(schedline);
         string sched_course;
-        schedss >> sched_course;
         string semester;
-        schedss >> semester;
-        schedule_map.insert({sched_course,semester});
+  if (schedss >> sched_course >> semester) {
+            schedule_map[sched_course].push_back(semester);
+        }
+    }
+
+        //printing schedule map
+        for (const auto& kv : schedule_map) {
+        cout << kv.first << ": ";
+        for (const auto& value : kv.second) {
+            cout << value << " ";
+        }
+        cout << endl;
     }
 
     if(!has_cycle(course_map) && max_depth < 6 ){
         cout << "Graph does not contain a cycle and can be done with 6 semester. Therefore, its viable" << endl;
         cout << "max_depth: "<<max_depth<<endl;
-        //call viability function
-        if(viability(course_map,schedule_map)){
-            cout << "Proposed schedule is viable" << endl;
-            return 0;
+        if(!sameCourse(schedule_map)){
+            cout << "There are no courses are taken more than once" << endl;
+            if(!isTooMany(schedule_map)){
+            cout << "Student proposed at most 3 courses in a semester" << endl;
+                return 0;
+            }else{
+            cout << "Error: More than 3 courses in a semester" << endl;
+            return 1;
+            }
         }else{
-            cout << "Proposed schedule is not viable" << endl;
+            cout << "courses have been taken more than once" << endl;
             return 1;
         }
         //return 0;
