@@ -26,16 +26,19 @@ bool isBefore(string string1,string string2){
     string semester1 = string1.substr(0,4);
     string semester2 = string2.substr(0,4);
     int sem1 = stoi(semester1);
-    cout << sem1 << endl;
     int sem2 = stoi(semester2);
-    cout << sem2 << endl;
+    
    if (sem1 == sem2) {
         if (string1.length() > 4) {
-            string semChecker = string1.substr(4, string1.length() - 4);
-            cout << semChecker << endl;
-            if (semChecker == "Spring") {
+            string semChecker1 = string1.substr(4, string1.length() - 4);
+            string semChecker2 = string2.substr(4,string2.length()-4);
+            if (semChecker1 == "Spring" && semChecker2 == "Summer") {
           return true;
-            } else {
+            } else if(semChecker1 == "Spring" && semChecker2 == "Fall"){
+                return true;
+            }else if(semChecker1 == "Summer" && semChecker2 == "Fall"){
+                return true;
+            }else {
                 return false;
             }
         } else {
@@ -48,6 +51,9 @@ bool isBefore(string string1,string string2){
         return false;
     }
 }
+
+
+
 
 
 bool viability(unordered_map<string,vector<string>> &course_map,unordered_map<string,vector<string>> &schedule_map){
@@ -67,7 +73,6 @@ bool viability(unordered_map<string,vector<string>> &course_map,unordered_map<st
     }   
     return true;
 }
-
 
 bool isTooMany(const unordered_map<string, vector<string>>& schedule_map) {
 //swapping key-value of existing unordered_map into value-key relation and store it in a new unordered map
@@ -167,9 +172,44 @@ int main(int argc, char* argv[]){
         cout << endl;
     }
 
-    if(!has_cycle(course_map) && max_depth < 6 ){
+    if(!has_cycle(course_map) && max_depth <  6){
         cout << "Graph does not contain a cycle and can be done with 6 semester. Therefore, its viable" << endl;
         cout << "max_depth: "<<max_depth<<endl;
+        if(!sameCourse(schedule_map)){
+            cout << "Bullet1: passed" << endl;
+            if(viability(course_map,schedule_map)){
+            cout<< "Bullet 2: Passed" << endl;
+                 if(!isTooMany(schedule_map)){
+            cout << "Bullet 3: Passed" << endl;
+                return 0;
+                }else{
+                 cout << "Bullet 3: Failed" << endl;
+                return 1;
+            }
+             }else{
+            cout << "Bullet 2: Failed" << endl;
+            return 1;
+        }
+        }else{
+            cout << "Bullet 1: failed" << endl;
+            return 1;
+        }
+    }else{
+        cout << "Graph contains a cycle or cannot be done with 6 semester. Therefore, it not viable"  << endl;
+        cout << "max_depth: "<<max_depth<<endl;
+        return 1;
+    }
+
+
+
+
+
+
+        if(viability(course_map,schedule_map)){
+            cout<< "Bullet 2: Passed" << endl;
+        }else{
+            cout << "Bullet 2: Not passed" << endl;
+        }
         if(!sameCourse(schedule_map)){
             cout << "There are no courses are taken more than once" << endl;
             if(!isTooMany(schedule_map)){
@@ -183,12 +223,6 @@ int main(int argc, char* argv[]){
             cout << "courses have been taken more than once" << endl;
             return 1;
         }
-        //return 0;
-    }else{
-        cout << "Graph contains a cycle or cannot be done with 6 semester. Therefore, it not viable"  << endl;
-        cout << "max_depth: "<<max_depth<<endl;
-        //return 1;
-    }
-
+        return 0;
 
 }
