@@ -51,17 +51,21 @@ bool isBefore(string string1,string string2){
 
 
 bool viability(unordered_map<string,vector<string>> &course_map,unordered_map<string,vector<string>> &schedule_map){
- for(const auto &course:schedule_map){
-    string semCourse = course.second[0];
-    for(const auto &prereq:course_map[course.first]){
-        auto prereq_itr = schedule_map.find(prereq);
-        string semPrereq = prereq_itr->second[0];
-        if(!isBefore(semPrereq,semCourse)){
-            return false;
+    for(const auto &course:schedule_map){
+        string semCourse = course.second[0];
+        for(const auto &prereq:course_map[course.first]){
+            auto prereq_itr = schedule_map.find(prereq);
+            if(prereq_itr == schedule_map.end()) {
+                // element not found in schedule_map means theres no prereq
+                continue;
+            }
+            string semPrereq = prereq_itr->second[0];
+            if(!isBefore(semPrereq,semCourse)){
+                return false;
+            }
         }
-    }
- }   
- return true;
+    }   
+    return true;
 }
 
 
