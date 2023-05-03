@@ -14,7 +14,7 @@ class MaxHeap{
     string getCourseName();
     void add(string Bnum,string course,int points);
     void promote(string Bnum,string course,int points);
-    string enroll(string courseName);//extract max and return the name of the student
+    Node* enroll(string courseName);//extract max and return the name of the student
 };
 
 

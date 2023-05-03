@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Node::Node(string Bnum, string course, int points){
+Node::Node(string Bnum, string course, int points) {
     this->Bnum = Bnum;
     this->course = course;
     this->points = points;
