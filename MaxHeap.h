@@ -4,11 +4,13 @@
 #include <string>
 #include "Node.h"
 
+using namespace std;
+
 class MaxHeap{
     private:
     Node* root;
     string courseName;
-    Node* search(string Bnum, Node* currNode);
+
 
     public:
     MaxHeap(string courseName);
@@ -17,7 +19,9 @@ class MaxHeap{
     void promote(string Bnum,int points);
     Node* enroll();
     Node* search(string Bnum);
+    Node* searchHelper(Node* node, string Bnum);
    
+    void printHeap();
      //extract max and return the name of the student
 };
 

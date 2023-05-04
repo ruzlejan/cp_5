@@ -1,5 +1,6 @@
 #include "MaxHeap.h"
 #include <iostream>
+#include <queue>
 
 using namespace std;
 
@@ -12,65 +13,86 @@ string MaxHeap::getCourseName(){
     return this-> courseName;
 }
 
-void MaxHeap::add(string Bnum,string course,int points){
+
 
    void MaxHeap::add(string Bnum,string course,int points){
         Node* node = new Node(Bnum,course,points);
         
-
-
         if(root == NULL){
             root = node;     
             return;
         }
 
-
         Node* current = root;
         Node* parent = NULL;
 
-
-        if(current != NULL) {
+        while(current != NULL){
             parent = current;
-
 
             if(node->points > current->points){
                 current = current->right;
-
-
-            }
-            else{
+            }else{
                 current = current->left;
             }
         }
 
+         // Insert the new node as the left or right child of the parent node
+         if(node->points > parent->points){
+            parent->right = node;
+         }else{
+            parent->left = node;
+         }
 
-        if(node->points -> current->points){
-            parent->swapData(node);
+         // Set the new node's parent pointer
+         node->parent = parent;
+
+         // Rebalance the heap by swapping the new node with its parent as necessary
+         while(node->parent != NULL && node->points > node->parent->points){
+            swap(node->points, node->parent->points);
+             swap(node->course, node->parent->course);
+            swap(node->Bnum,node->parent->Bnum);
+            node = node->parent;
+         }
+
         }
 
-
-        while(parent->parent != NULL && parent->points > parent->parent->points){
-            parent->swapData(parent->parent);
-            parent = parent->parent;
+    void MaxHeap::printHeap() {
+    if (root == NULL) {
+        cout << "Heap is empty." << endl;
+        return;
+    }
+    queue<Node*> q;
+    q.push(root);
+    while (!q.empty()) {
+        int size = q.size();
+        for (int i = 0; i < size; i++) {
+            Node* curr = q.front();
+            q.pop();
+            cout << "(" << curr->Bnum << ", " << curr->course << ", " << curr->points << ") ";
+            if (curr->left != NULL) {
+                q.push(curr->left);
+            }
+            if (curr->right != NULL) {
+                q.push(curr->right);
+            }
         }
+        cout << endl;
+    }
 
-
-
-
-        
-        }
+    cout << endl;
+}
 
 
 
 
     
-}
+
 //extract Max
 Node* MaxHeap::enroll(){
 
    
-    if (root == nullptr) {
-        return nullptr;
+    if (root == NULL) {
+        return NULL;
     }
 
     // Store the maximum node
@@ -128,29 +150,42 @@ Node* MaxHeap::enroll(){
 
 void MaxHeap::promote(string bNum,  int points) {
 
-
+   Node* node = search(bNum);
+    if (node == NULL) {
+        return; // Bnum not found in the heap
+    }
+    // Update the node's points
+    node->points = points;
+    // Rebuild the heap by swapping the node with its parent if it is greater than its parent
+    while (node->parent != NULL && node->points > node->parent->points) {
+           swap(node->points, node->parent->points);
+             swap(node->course, node->parent->course);
+            swap(node->Bnum,node->parent->Bnum);
+        node = node->parent;
+    }
     
 }
 
-Node* MaxHeap::search(string bNum, Node* currNode) {
+Node* MaxHeap::search(string bNum){
 
- if (currNode == nullptr) {
-        return nullptr; 
-    } else if (currNode->Bnum == bNum) {
-        return currNode; 
-    } else if (currNode->Bnum < bNum) {
-        return nullptr; 
-    } else {
-        Node* leftResult = search(bNum, currNode->left); 
-        if (leftResult != nullptr) {
-            return leftResult; 
-        } else {
-            return search(bNum, currNode->right); 
-        }
-    }
+return searchHelper(this->root,bNum);
+    
 }
 
-Node* MaxHeap::search(string bNum) {
-
-    return search(bNum, root);
+Node* MaxHeap::searchHelper(Node* node, string Bnum){
+ if (node == NULL) {
+        return NULL;
+    }
+    if (node->Bnum == Bnum) {
+        return node;
+    }
+    Node* leftResult = searchHelper(node->left, Bnum);
+    if (leftResult != NULL) {
+        return leftResult;
+    }
+    Node* rightResult = searchHelper(node->right, Bnum);
+    if (rightResult != NULL) {
+        return rightResult;
+    }
+    return NULL;
 }

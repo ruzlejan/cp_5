@@ -2,6 +2,8 @@
 #define NODE_H
 #include <string>
 
+using namespace std;
+
 class Node{
     private:
     string Bnum;
