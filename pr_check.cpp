@@ -45,6 +45,9 @@ bool pr_check::has_cycle(unordered_map<string,vector<string>> &course_map){
     return false;
 }
 
+int pr_check::getMaxDepth(){
+    return max_depth;
+}
 
 
 string pr_check::pr_reader(){
@@ -100,7 +103,7 @@ string pr_check::pr_reader(){
 
    
 
-    if(!has_cycle(course_map) && max_depth < 6 ){
+    if(!has_cycle(course_map) && getMaxDepth() < 6 ){
         cout << "Graph does not contain a cycle and can be done with 6 semester. Therefore, its viable" << endl;
         cout << "max_depth: "<<max_depth<<endl;
         return "Viable";

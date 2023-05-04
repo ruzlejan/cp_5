@@ -7,10 +7,11 @@
 #include <vector>
 #include <queue>
 #include "pr_check.cpp"
+#include "sch_check.h"
 
 using namespace std;
 
-bool sameCourse(unordered_map<string,vector<string>> &schedule_map){
+bool sch_check::sameCourse(unordered_map<string,vector<string>> &schedule_map){
 for(const auto& values:schedule_map){
     const auto& numValues = values.second;
     if(numValues.size() > 1){
@@ -22,7 +23,7 @@ return false;
 
 
 
-bool isBefore(string string1,string string2){
+bool sch_check::isBefore(string string1,string string2){
     string semester1 = string1.substr(0,4);
     string semester2 = string2.substr(0,4);
     int sem1 = stoi(semester1);
@@ -56,7 +57,7 @@ bool isBefore(string string1,string string2){
 
 
 
-bool viability(unordered_map<string,vector<string>> &course_map,unordered_map<string,vector<string>> &schedule_map){
+bool sch_check::viability(unordered_map<string,vector<string>> &course_map,unordered_map<string,vector<string>> &schedule_map){
     for(const auto &course:schedule_map){
         string semCourse = course.second[0];
         for(const auto &prereq:course_map[course.first]){
@@ -74,7 +75,7 @@ bool viability(unordered_map<string,vector<string>> &course_map,unordered_map<st
     return true;
 }
 
-bool isTooMany(const unordered_map<string, vector<string>>& schedule_map) {
+bool sch_check::isTooMany(const unordered_map<string, vector<string>>& schedule_map) {
 //swapping key-value of existing unordered_map into value-key relation and store it in a new unordered map
 unordered_map<string,vector<string>> newMap;
     for (const auto& kv : schedule_map) {
@@ -104,52 +105,54 @@ for(const auto& values:newMap){
 
 
 
-int main(int argc, char* argv[]){
+ string sch_check:: sch_reader(){
 
 
-    //open the file
-    ifstream infile1(argv[1]);
-    if (!infile1.is_open()) {
-        cerr << "Failed to open " << argv[1] << endl;
-        return 1;
-    }
-    unordered_map<string,vector<string>> course_map;
-    string line;
-    // Read the file contents and store it into an unordered map
-    while(getline(infile1,line)){
-        stringstream ss(line);
-        string course;
-        ss >> course;
+    // //open the file
+    // ifstream infile1(argv[1]);
+    // if (!infile1.is_open()) {
+    //     cerr << "Failed to open " << argv[1] << endl;
+    //     return 1;
+    // }
+    // unordered_map<string,vector<string>> course_map;
+    // string line;
+    // // Read the file contents and store it into an unordered map
+    // while(getline(infile1,line)){
+    //     stringstream ss(line);
+    //     string course;
+    //     ss >> course;
 
        
-        string prereq;
-        while (ss >> prereq) {
-            // Check if the course already exists in the map
-            auto iterator = course_map.find(course);
-            auto prereq_it = course_map.find(prereq);
-            if (iterator != course_map.end()) {
-                // Add the new prerequisite to the existing vector
-                iterator->second.push_back(prereq);
-            }else {
-                // Add a new element to the map with an empty vector
-                course_map[course] = vector<string>();
-                // Add the new prerequisite to the empty vector
-                course_map[course].push_back(prereq);
-            }
-            //add courses that has no prerequisites with an empty vector
-            if(prereq_it == course_map.end()){
-                course_map[prereq] = vector<string>();
-            }
-        }
-    }
+    //     string prereq;
+    //     while (ss >> prereq) {
+    //         // Check if the course already exists in the map
+    //         auto iterator = course_map.find(course);
+    //         auto prereq_it = course_map.find(prereq);
+    //         if (iterator != course_map.end()) {
+    //             // Add the new prerequisite to the existing vector
+    //             iterator->second.push_back(prereq);
+    //         }else {
+    //             // Add a new element to the map with an empty vector
+    //             course_map[course] = vector<string>();
+    //             // Add the new prerequisite to the empty vector
+    //             course_map[course].push_back(prereq);
+    //         }
+    //         //add courses that has no prerequisites with an empty vector
+    //         if(prereq_it == course_map.end()){
+    //             course_map[prereq] = vector<string>();
+    //         }
+    //     }
+    // }
 
     //extracting the schedfile.txt
 
        //open the file
-    ifstream infile2(argv[2]);
+       pr_check* prschedule = new pr_check();
+       prschedule->pr_reader();
+    ifstream infile2("schedfile.txt");
     if (!infile2.is_open()) {
-        cerr << "Failed to open " << argv[2] << endl;
-        return 1;
+        cerr << "Failed to open " <<  endl;
+        return NULL;
     }   
 
     unordered_map<string,vector<string>> schedule_map;
@@ -172,32 +175,28 @@ int main(int argc, char* argv[]){
         cout << endl;
     }
 
-    if(!has_cycle(course_map) && max_depth <  6){
-        cout << "Graph does not contain a cycle and can be done with 6 semester. Therefore, its viable" << endl;
-        cout << "max_depth: "<<max_depth<<endl;
+    if( prschedule->pr_reader() == "Viable"){
         if(!sameCourse(schedule_map)){
             cout << "Bullet1: passed" << endl;
             if(viability(course_map,schedule_map)){
             cout<< "Bullet 2: Passed" << endl;
                  if(!isTooMany(schedule_map)){
             cout << "Bullet 3: Passed" << endl;
-                return 0;
+                return "Viable";
                 }else{
                  cout << "Bullet 3: Failed" << endl;
-                return 1;
+                return "Not Viable";
             }
              }else{
             cout << "Bullet 2: Failed" << endl;
-            return 1;
+            return "Not Viable";
         }
         }else{
             cout << "Bullet 1: failed" << endl;
-            return 1;
+            return "Not Viable";
         }
     }else{
-        cout << "Graph contains a cycle or cannot be done with 6 semester. Therefore, it not viable"  << endl;
-        cout << "max_depth: "<<max_depth<<endl;
-        return 1;
+        return "Not Viable";
     }
 
 
@@ -205,24 +204,24 @@ int main(int argc, char* argv[]){
 
 
 
-        if(viability(course_map,schedule_map)){
-            cout<< "Bullet 2: Passed" << endl;
-        }else{
-            cout << "Bullet 2: Not passed" << endl;
-        }
-        if(!sameCourse(schedule_map)){
-            cout << "There are no courses are taken more than once" << endl;
-            if(!isTooMany(schedule_map)){
-            cout << "Student proposed at most 3 courses in a semester" << endl;
-                return 0;
-            }else{
-            cout << "Error: More than 3 courses in a semester" << endl;
-            return 1;
-            }
-        }else{
-            cout << "courses have been taken more than once" << endl;
-            return 1;
-        }
-        return 0;
+        // if(viability(course_map,schedule_map)){
+        //     cout<< "Bullet 2: Passed" << endl;
+        // }else{
+        //     cout << "Bullet 2: Not passed" << endl;
+        // }
+        // if(!sameCourse(schedule_map)){
+        //     cout << "There are no courses are taken more than once" << endl;
+        //     if(!isTooMany(schedule_map)){
+        //     cout << "Student proposed at most 3 courses in a semester" << endl;
+        //         return 0;
+        //     }else{
+        //     cout << "Error: More than 3 courses in a semester" << endl;
+        //     return 1;
+        //     }
+        // }else{
+        //     cout << "courses have been taken more than once" << endl;
+        //     return 1;
+        // }
+        // return 0;
 
 }

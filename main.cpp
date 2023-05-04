@@ -2,6 +2,7 @@
 #include "MaxHeap.h"
 #include "Node.h"
 #include "pr_check.h"
+#include "sch_check.h"
 
 using namespace std;
 
@@ -24,6 +25,10 @@ int main(){
     pr_check* prcheckObj =  new pr_check();
    string result = prcheckObj->pr_reader();
 cout<< result << endl;
+
+    sch_check* schCheckObj = new sch_check();
+    string result2 = schCheckObj->sch_reader();
+    cout << result2 << endl;
     return 0;
 
 

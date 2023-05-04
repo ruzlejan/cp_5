@@ -18,6 +18,8 @@ class pr_check{
     bool dfs(unordered_map<string,vector<string>> &course_map, unordered_set<string> &visited, const string &course,int depth,int &max_depth);
     bool has_cycle(unordered_map<string,vector<string>> &course_map);
     string pr_reader();
+
+    int getMaxDepth();
 };
 
 
