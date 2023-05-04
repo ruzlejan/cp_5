@@ -26,17 +26,17 @@ void MaxHeap::add(string Bnum,string course,int points){
 }
 
 //extract Max
-Node* MaxHeap::enroll(string courseName){
+Node* MaxHeap::enroll(){
 
    
     if (root == nullptr) {
         return nullptr;
     }
 
-    
+    // Store the maximum node
     Node* maxNode = root;
 
-    
+    // Find the last node of the heap
     Node* lastNode = root;
     Node* parent = NULL;
     while (lastNode->right != NULL) {
@@ -47,21 +47,20 @@ Node* MaxHeap::enroll(string courseName){
         lastNode = lastNode->left;
     }
 
-
+    // Replace the root node with the last node
     root->Bnum = lastNode->Bnum;
     root->course = lastNode->course;
     root->points = lastNode->points;
 
- 
+    // Remove the last node from the heap
     if (parent != NULL) {
         parent->right = NULL;
     } else {
         root = NULL;
     }
-
     delete lastNode;
 
-
+    // Heapify the tree
     Node* currNode = root;
     while (currNode != NULL) {
         Node* maxChild = currNode;
@@ -74,16 +73,15 @@ Node* MaxHeap::enroll(string courseName){
         if (maxChild == currNode) {
             break;
         }
-        
         swap(currNode->Bnum, maxChild->Bnum);
         swap(currNode->course, maxChild->course);
         swap(currNode->points, maxChild->points);
         currNode = maxChild;
     }
 
+    // Set the course name for the maximum node
     maxNode->course = courseName;
 
+    // Return the maximum node
     return maxNode;
-
-
 }
