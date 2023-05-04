@@ -1,6 +1,7 @@
 #include <iostream>
 #include "MaxHeap.h"
 #include "Node.h"
+#include "pr_check.h"
 
 using namespace std;
 
@@ -16,13 +17,13 @@ int main(){
     heapobj->add("B05318771","CS_310",100);
 
     heapobj->printHeap();
-
     heapobj->promote("1234567",500);
-
     heapobj->enroll();
-
     heapobj->printHeap();
 
+    pr_check* prcheckObj =  new pr_check();
+   string result = prcheckObj->pr_reader();
+cout<< result << endl;
     return 0;
 
 

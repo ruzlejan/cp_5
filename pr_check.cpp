@@ -5,12 +5,15 @@
 #include <unordered_set>
 #include <vector>
 #include <fstream>
+#include "pr_check.h"
 
 using namespace std;
 
- int max_depth = 0;
+pr_check::pr_check(){
+    max_depth = 0;
+}
 
-bool dfs(unordered_map<string,vector<string>> &course_map, unordered_set<string> &visited, const string &course,int depth,int &max_depth){
+bool pr_check::dfs(unordered_map<string,vector<string>> &course_map, unordered_set<string> &visited, const string &course,int depth,int &max_depth){
     visited.insert(course);
 
     if(depth > max_depth){
@@ -29,7 +32,7 @@ bool dfs(unordered_map<string,vector<string>> &course_map, unordered_set<string>
     return false;
 }
 
-bool has_cycle(unordered_map<string,vector<string>> &course_map){
+bool pr_check::has_cycle(unordered_map<string,vector<string>> &course_map){
     unordered_set<string> visited;
       
     for(const auto& course: course_map){
@@ -43,24 +46,23 @@ bool has_cycle(unordered_map<string,vector<string>> &course_map){
 }
 
 
-/*
-int main(int argc, char* argv[]){
 
-     if (argc < 2) {
-        cerr << "Usage: " << argv[0] << " <prereqfile>" << endl;
-        return 1;
-    }
+string pr_check::pr_reader(){
+
 
     //open the file
-    ifstream infile(argv[1]);
-    if (!infile.is_open()) {
-        std::cerr << "Failed to open " << argv[1] << std::endl;
-        return 1;
+    ifstream file("prereqs.txt");
+    if (!file.is_open()) {
+        std::cerr << "Failed to open "  << endl;
+        return NULL;
     }
-    unordered_map<string,vector<string>> course_map;
+
+   
+
+   //unordered_map<string,vector<string>> course_map;
     string line;
     // Read the file contents and store it into an unordered map
-    while(getline(infile,line)){
+    while(getline(file,line)){
         stringstream ss(line);
         string course;
         ss >> course;
@@ -87,17 +89,7 @@ int main(int argc, char* argv[]){
         }
     }
 
-   
 
-    if(!has_cycle(course_map) && max_depth < 6 ){
-        cout << "Graph does not contain a cycle and can be done with 6 semester. Therefore, its viable" << endl;
-        cout << "max_depth: "<<max_depth<<endl;
-    }else{
-        cout << "Graph contains a cycle or cannot be done with 6 semester. Therefore, it not viable"  << endl;
-        cout << "max_depth: "<<max_depth<<endl;
-    }
-
-    
      for (const auto& [course, prereq_list] : course_map) {
         cout << course << ": ";
         for (const auto& prereq : prereq_list) {
@@ -106,8 +98,20 @@ int main(int argc, char* argv[]){
         cout << endl;
     }
 
+   
+
+    if(!has_cycle(course_map) && max_depth < 6 ){
+        cout << "Graph does not contain a cycle and can be done with 6 semester. Therefore, its viable" << endl;
+        cout << "max_depth: "<<max_depth<<endl;
+        return "Viable";
+    }else{
+        cout << "Graph contains a cycle or cannot be done with 6 semester. Therefore, it not viable"  << endl;
+        cout << "max_depth: "<<max_depth<<endl;
+        return "Not Viable";
+    }
+
+    
 
 
 
-    return 0;
-}*/
+}
