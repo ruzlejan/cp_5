@@ -24,7 +24,6 @@ void MaxHeap::add(string Bnum,string course,int points){
 
     
 }
-
 //extract Max
 Node* MaxHeap::enroll(){
 
@@ -84,4 +83,33 @@ Node* MaxHeap::enroll(){
 
     // Return the maximum node
     return maxNode;
+}
+
+void MaxHeap::promote(string bNum,  int points) {
+
+
+    
+}
+
+Node* MaxHeap::search(string bNum, Node* currNode) {
+
+ if (currNode == nullptr) {
+        return nullptr; 
+    } else if (currNode->Bnum == bNum) {
+        return currNode; 
+    } else if (currNode->Bnum < bNum) {
+        return nullptr; 
+    } else {
+        Node* leftResult = search(bNum, currNode->left); 
+        if (leftResult != nullptr) {
+            return leftResult; 
+        } else {
+            return search(bNum, currNode->right); 
+        }
+    }
+}
+
+Node* MaxHeap::search(string bNum) {
+
+    return search(bNum, root);
 }
