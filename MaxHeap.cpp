@@ -14,13 +14,54 @@ string MaxHeap::getCourseName(){
 
 void MaxHeap::add(string Bnum,string course,int points){
 
-    Node* node = new Node(Bnum,course,points);
-    //do the  insert function
+   void MaxHeap::add(string Bnum,string course,int points){
+        Node* node = new Node(Bnum,course,points);
+        
 
-    if(root == NULL){
-        root = node;      
-        return;
-    }
+
+        if(root == NULL){
+            root = node;     
+            return;
+        }
+
+
+        Node* current = root;
+        Node* parent = NULL;
+
+
+        if(current != NULL) {
+            parent = current;
+
+
+            if(node->points > current->points){
+                current = current->right;
+
+
+            }
+            else{
+                current = current->left;
+            }
+        }
+
+
+        if(node->points -> current->points){
+            parent->swapData(node);
+        }
+
+
+        while(parent->parent != NULL && parent->points > parent->parent->points){
+            parent->swapData(parent->parent);
+            parent = parent->parent;
+        }
+
+
+
+
+        
+        }
+
+
+
 
     
 }
