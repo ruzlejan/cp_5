@@ -1,6 +1,5 @@
-CC = gcc
-CFLAGS = -Wall -std=c++17  -ggdb 
-
+CC = g++
+CFLAGS=-std=c++17 -Wall -Wextra -pedantic -O3
 
 main: main.o MaxHeap.o Node.o pr_check.o sch_check.o
 	g++ main.o MaxHeap.o Node.o pr_check.o sch_check.o -o main
@@ -20,12 +19,12 @@ MaxHeap.o: MaxHeap.cpp
 Node.o: Node.cpp 
 	g++ -c Node.cpp
 
-waitlist: waitlist.o  MaxHeap.o Node.o 
-	g++ waitlist.o MaxHeap.o Node.o -o wait
 
-waitlist.o: waitlist.cpp Node.h MaxHeap.h
+waitlist: waitlist.o  MaxHeap.o Node.o pr_check.o
+	g++ waitlist.o MaxHeap.o Node.o pr_check.o -o waitlist
+
+waitlist.o: waitlist.cpp Node.h MaxHeap.h pr_check.h
 	g++ -c waitlist.cpp
-
 
 testpr_check : pr_check
 	./pr_check prereqs.txt
@@ -33,6 +32,9 @@ testpr_check : pr_check
 testsch_check : sch_check
 	./sch_check prereqs.txt schedfile.txt
 
+test: waitlist
+	./waitlist 2023Fall prerequisites.txt 
+
 clean :
-	#rm sch_check
+	
 	rm -f *.o main

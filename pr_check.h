@@ -15,9 +15,10 @@ class pr_check{
 
     public:
     pr_check();
-    bool dfs(unordered_map<string,vector<string>> &course_map, unordered_set<string> &visited, const string &course,int depth,int &max_depth);
+    bool dfs(unordered_map<string,vector<string>> &course_map, unordered_set<string> &visited, unordered_set<string> &recursion_stack, const string &course, int depth, int &max_depth);
     bool has_cycle(unordered_map<string,vector<string>> &course_map);
-    string pr_reader();
+    string pr_reader(string fileName);
+    unordered_map<string,vector<string>>& getMap();
 
     int getMaxDepth();
 };

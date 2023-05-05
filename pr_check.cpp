@@ -9,52 +9,65 @@
 
 using namespace std;
 
-pr_check::pr_check(){
-    max_depth = 0;
+pr_check::pr_check() : max_depth{0}, course_map{}{
+    
+
 }
 
-bool pr_check::dfs(unordered_map<string,vector<string>> &course_map, unordered_set<string> &visited, const string &course,int depth,int &max_depth){
+bool pr_check::dfs(unordered_map<string,vector<string>> &course_map, unordered_set<string> &visited, unordered_set<string> &recursion_stack, const string &course, int depth, int &max_depth) {
     visited.insert(course);
+    recursion_stack.insert(course);
 
-    if(depth > max_depth){
+    if (depth > max_depth) {
         max_depth = depth;
     }
 
-    for(const auto& prereq: course_map[course]){
-        if(!visited.count(prereq)){
-            if(dfs(course_map,visited,prereq,depth + 1, max_depth)){
+    for (const auto& prereq : course_map[course]) {
+        if (!visited.count(prereq)) {
+            if (dfs(course_map, visited, recursion_stack, prereq, depth + 1, max_depth)) {
+                return true;
+            }
+        } else if (recursion_stack.count(prereq)) {
+            // If a cycle is detected, return true
+            return true;
+        }
+    }
+
+    recursion_stack.erase(course);
+
+    return false;
+}
+
+bool pr_check::has_cycle(unordered_map<string,vector<string>> &course_map) {
+    unordered_set<string> visited;
+    unordered_set<string> recursion_stack;
+      
+    for (const auto& course : course_map) {
+        if (!visited.count(course.first)) {
+            if (dfs(course_map, visited, recursion_stack, course.first, 0, max_depth)) {
                 return true;
             }
         }
     }
 
-    
-    return false;
-}
-
-bool pr_check::has_cycle(unordered_map<string,vector<string>> &course_map){
-    unordered_set<string> visited;
-      
-    for(const auto& course: course_map){
-        if(!visited.count(course.first)){
-              if (dfs(course_map, visited,course.first,0,max_depth)) {
-                return true;
-        }
-    }
-}
     return false;
 }
 
 int pr_check::getMaxDepth(){
-    return max_depth;
+    return this->max_depth;
 }
 
 
-string pr_check::pr_reader(){
+unordered_map<string,vector<string>>& pr_check::getMap(){
+    return this->course_map;
+}
+
+
+string pr_check::pr_reader(string fileName){
 
 
     //open the file
-    ifstream file("prereqs.txt");
+    ifstream file(fileName);
     if (!file.is_open()) {
         std::cerr << "Failed to open "  << endl;
         return NULL;
@@ -103,13 +116,18 @@ string pr_check::pr_reader(){
 
    
 
-    if(!has_cycle(course_map) && getMaxDepth() < 6 ){
-        cout << "Graph does not contain a cycle and can be done with 6 semester. Therefore, its viable" << endl;
-        cout << "max_depth: "<<max_depth<<endl;
-        return "Viable";
+
+    if(!has_cycle(course_map)){
+        cout << "Passed: No Cycle" << endl;
+        if(getMaxDepth() < 6){
+            cout << "Passed: Can be done in 6 semesters" << endl;
+            return "Viable";
+        }else{
+            cout << "Failed: Too many courses" << endl;
+            return "Not Viable";
+        }
     }else{
-        cout << "Graph contains a cycle or cannot be done with 6 semester. Therefore, it not viable"  << endl;
-        cout << "max_depth: "<<max_depth<<endl;
+        cout << "Failed: Has Cycle" << endl;
         return "Not Viable";
     }
 
